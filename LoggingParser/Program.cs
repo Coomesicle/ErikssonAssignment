@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Drawing;
 
 class Program
 {
@@ -7,8 +8,9 @@ class Program
     static void Main(string[] args)
     {
         // File path input
-        Console.WriteLine("Please enter the path to the file you want to parse:" +
-                 "\n" + "(Press Enter to use the default sample_log.txt file)");
+        Console.Clear();
+        Console.WriteLine("(Press Enter to use the default sample_log.txt file)");
+        Console.Write("Please enter the path to the file you want to parse: ");
         string logFilePath = Console.ReadLine();
 
         if (string.IsNullOrWhiteSpace(logFilePath))
@@ -26,7 +28,7 @@ class Program
 
         logs = ParseLogs(logFilePath);
 
-        Console.WriteLine("Finished parsing the log file.");
+        Console.WriteLine($"Finished parsing the log file: '{logFilePath}'" );
 
         string choice = PrintTerminal();
 
@@ -45,7 +47,7 @@ class Program
 
             if (choice == "3")
             {
-                Console.WriteLine("TODO");
+                DisplayFrequentMessages(logs);
             }
             choice = PrintTerminal();
         }
@@ -133,6 +135,7 @@ class Program
             // Reset color
             Console.ResetColor();
         }
+        Console.WriteLine(new string('-', 60));
         Console.WriteLine("Press Any Key to Continue...");
         Console.ReadKey();
     }
@@ -162,13 +165,14 @@ class Program
                 i.Key,
                 i.Value.Count);
         }
+        Console.WriteLine(new string('-', 30));
 
         // Index of event types
         List<string> eventTypes = eventTypeLogs.Keys.ToList();
 
         // See al errors of that type
         Console.WriteLine("To see all errors of that type, select that number from the menu.");
-        Console.Write("Select your choice or select any other key to return to the main menu: ");
+        Console.Write("Select your choice or any other key to return to the main menu: ");
         string eventChoice = Console.ReadLine().Trim();
 
         int eventChoiceNumber;
@@ -180,6 +184,55 @@ class Program
                 DisplayAllLogs(eventTypeLogs[eventTypes[eventChoiceNumber]]);
             }
         }
+    }
+
+    static void DisplayFrequentMessages(List<Log> logs)
+    {
+        Dictionary<string, int> messageCounts = new Dictionary<string, int>();
+
+        foreach (var log in logs)
+        {
+            var message = log.Event_Type + " " + log.Message;
+            int colonIndex = message.IndexOf(':');
+            if (colonIndex != -1)
+            {
+                message = message.Substring(0, colonIndex);
+            }
+
+            if (!messageCounts.ContainsKey(message))
+            {
+                messageCounts[message] = 0;
+            }
+            messageCounts[message]++;
+        }
+
+        // Sort messages
+        var orderedMessages = messageCounts.OrderBy(x => x.Value);
+
+
+        // Header
+        Console.WriteLine("{0,-15} {1,-15} {2}", "Occurrences", "Event Type", "Message");
+        Console.WriteLine(new string('-', 60));
+
+        for (int i = orderedMessages.Count() - 1; i >= orderedMessages.Count() - 3; i--)
+        {
+            var msg = orderedMessages.ElementAt(i);
+            int eventIndex = msg.Key.IndexOf(' ');
+
+            // There is a better way to do this, will look into it later.
+            string eventType = msg.Key.Substring(0, eventIndex);
+            string message = msg.Key.Substring(eventIndex + 1);
+
+            Console.WriteLine("{0,-15} {1,-15} {2}",
+                msg.Value,
+                eventType,
+                message);
+        }
+
+        Console.WriteLine(new string('-', 60));
+
+        Console.WriteLine("Press Any Key to Continue...");
+        Console.ReadKey();
     }
 
 }
