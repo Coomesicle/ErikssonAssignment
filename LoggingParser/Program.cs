@@ -8,8 +8,9 @@ class Program
     static void Main(string[] args)
     {
         // File path input
-        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine("(Press Enter to use the default sample_log.txt file)");
+        Console.ResetColor();
         Console.Write("Please enter the path to the file you want to parse: ");
         string logFilePath = Console.ReadLine();
 
@@ -51,7 +52,7 @@ class Program
             }
             choice = PrintTerminal();
         }
-
+        Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine("Exiting the program. Goodbye!");
         return;
     }
