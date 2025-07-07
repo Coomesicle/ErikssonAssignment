@@ -1,3 +1,5 @@
 {
-  "dotnet.defaultSolution": "LoggingParser.sln"
+  "dotnet.defaultSolution": "LoggingParser.sln",
+  "github.copilot.advanced": {},
+  "github.copilot.renameSuggestions.triggerAutomatically": false
 }
